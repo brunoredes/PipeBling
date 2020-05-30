@@ -1,13 +1,16 @@
 import { Router } from 'express';
 import OpportunityController from '../controllers/OpportunityController';
+import OrderController from '../controllers/OrderController';
 
 const routes = new Router();
 
-routes.get('/teste', (request, response) => {
-  response.json({ message: 'rolou' });
+routes.get('/', (request, response) => {
+  response.json({
+    message: 'API de Integração do sistema Pipedrive com o CRM Bling',
+  });
 });
 
 routes.get('/opportunities', OpportunityController.index);
-routes.post('/opportunities', OpportunityController.store);
+routes.post('/opportunities', OrderController.store);
 
 export default routes;
