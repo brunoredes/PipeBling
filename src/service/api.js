@@ -1,7 +1,12 @@
 import axios from 'axios';
 
-const api = axios.create({
-  baseURL: 'https://api.pipedrive.com/v1/',
-});
+export default {
+  apiPipedrive: axios.create({
+    baseURL: 'https://api.pipedrive.com/v1/',
+  }),
 
-export default api;
+  apiBling: axios.create({
+    baseURL: 'https://bling.com.br/Api/v2',
+    headers: { 'Content-Type': 'x-www-form-urlencoded' },
+  }),
+};

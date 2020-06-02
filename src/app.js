@@ -10,7 +10,7 @@ import sentryConfig from './config/sentry';
 import routes from './routes/routes';
 
 import './database';
-// buscar oportunidade com status === 'ganho':Pipedrive
+// buscar oportunidade (venda) com status === 'won':Pipedrive
 // Inserir como pedido no Bling
 class App {
   constructor() {

@@ -1,3 +1,3 @@
 export default {
-  apiKey: process.env.API_TOKEN,
+  apiToken: process.env.API_TOKEN,
 };
