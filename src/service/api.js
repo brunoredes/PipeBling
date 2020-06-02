@@ -7,6 +7,5 @@ export default {
 
   apiBling: axios.create({
     baseURL: 'https://bling.com.br/Api/v2',
-    headers: { 'Content-Type': 'x-www-form-urlencoded' },
   }),
 };

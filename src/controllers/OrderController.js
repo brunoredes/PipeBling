@@ -1,4 +1,3 @@
-// import parser from 'xml2json';
 import api from '../service/api';
 import pipedriveConfig from '../config/pipedrive';
 import blingConfig from '../config/bling';
@@ -14,85 +13,93 @@ export default {
       `deals?status=won&start=0&api_token=${apiToken}`
     );
 
-    const pipedriveOpportunitiesData = pipedriveOpportunities.data.data;
-    // console.log(pipedriveOpportunitiesData);
+    let pipedriveDataToXmlBlingData = '';
 
-    const pipedriveDataToXmlBlingData = pipedriveOpportunitiesData.reduce(
-      (xml, item) =>
-        (xml += `
-      <?xml version="1.0" encoding="UTF-8"?>
-<produtocompra>
-   <numeropedido>${item.id}</numeropedido>
-   <datacompra>${item.add_time}</datacompra>
-   <dataprevista>${item.update_time}</dataprevista>
-   <ordemcompra>${randomNumbers(1, 100)}</ordemcompra>
-   <desconto>10%</desconto>
-   <observacoes>Observações normais...</observacoes>
-   <observacaointerna>Observações internas...</observacaointerna>
-   <fornecedor>
-      <id>${item.id}</id>
-      <nome>${item.name}</nome>
-      <tipopessoa>F</tipopessoa>
-      <cpfcnpj>1234567899</cpfcnpj>
-      <ie></ie>
-      <rg>1234567</rg>
-      <contribuinte>9</contribuinte>
-      <endereco>Praça da Sé, 68</endereco>
-      <endereconro></endereconro>
-      <complemento></complemento>
-      <bairro>Centro</bairro>
-      <cep>01.001-001</cep>
-      <cidade>São Paulo</cidade>
-      <uf>SP</uf>
-      <fone>(11) 2222-2222</fone>
-      <celular>(11) 92222-2222</celular>
-      <email>${item.cc_email}</email>
-   </fornecedor>
-   <itens>
-      <item>
-         <codigo>${item.id}</codigo>
-         <descricao>${item.title}</descricao>
-         <un/>
-         <qtde>1</qtde>
-         <valor>${item.value}</valor>
-      </item>
-      <item>
-         <codigo>${item.id}</codigo>
-         <descricao>${item.title}</descricao>
-         <un/>
-         <qtde>1</qtde>
-         <valor>${item.value}</valor>
-      </item>
-   </itens>
-   <parcelas>
-      <parcela>
-         <nrodias>90</nrodias>
-         <valor>${item.value}</valor>
-         <obs>Uma observação qualquer...</obs>
-         <idformapagamento>123456</idformapagamento>
-      </parcela>
-      <parcela>
-         <nrodias>90</nrodias>
-         <valor>${item.value}</valor>
-         <obs>Uma observação qualquer...</obs>
-         <idformapagamento>123456</idformapagamento>
-      </parcela>
-   </parcelas>
-   <transporte>
-      <transportador>Meu transportador</transportador>
-      <freteporconta>R</freteporconta>
-      <qtdvolumes>1</qtdvolumes>
-      <frete>100.0</frete>
-   </transporte>
-</produtocompra>`)
-    );
-    console.log(pipedriveDataToXmlBlingData);
+    try {
+      const pipedriveOpportunitiesData = pipedriveOpportunities.data.data;
 
-    const res = await apiBling.post(
-      `/pedidocompra/json/&apikey=${apiKey}&xml=${pipedriveDataToXmlBlingData}`
-    );
-    console.log(res.data.retorno.erros);
+      pipedriveDataToXmlBlingData = pipedriveOpportunitiesData.reduce(
+        (xml, item) =>
+          (xml += `
+          <?xml version="1.0" encoding="UTF-8"?>
+          <pedido>
+           <cliente>
+           <nome>${item.creator_user_id.name}</nome>
+           <tipoPessoa>F</tipoPessoa>
+           <endereco>Praça da Sé</endereco>
+           <cpf_cnpj>12345678909</cpf_cnpj>
+           <ie_rg>012345678</ie_rg>
+           <numero>68</numero>
+           <complemento>A</complemento>
+           <bairro>Centro</bairro>
+           <cep>01001001</cep>
+           <cidade>São Paulo</cidade>
+           <uf>SP</uf>
+           <fone>1129999999</fone>
+           <email>${item.cc_email}</email>
+           </cliente>
+           <transporte>
+           <transportadora>Transportadora Eu</transportadora>
+           <tipo_frete>R</tipo_frete>
+           <servico_correios>SEDEX - CONTRATO</servico_correios>
+           <dados_etiqueta>
+           <nome>Endereço de entrega</nome>
+           <endereco>Praça da Sé</endereco>
+           <numero>68</numero>
+           <complemento>a</complemento>
+           <municipio>São Paulo</municipio>
+           <uf>SP</uf>
+           <cep>01.001-001</cep>
+           <bairro>Centro</bairro>
+           </dados_etiqueta>
+           <volumes>
+           <volume>
+           <servico>SEDEX - CONTRATO</servico>
+           <codigoRastreamento></codigoRastreamento>
+           </volume>
+           <volume>
+           <servico>PAC - CONTRATO</servico>
+           <codigoRastreamento></codigoRastreamento>
+           </volume>
+           </volumes>
+           </transporte>
+           <itens>
+           <item>
+           <codigo>${item.id}</codigo>
+           <descricao>${item.title}</descricao>
+           <un>Pç</un>
+           <qtde>10</qtde>
+           <vlr_unit>${item.value}</vlr_unit>
+           </item>
+           </itens>
+           <parcelas>
+           <parcela>
+           <data>${item.add_time}</data>
+           <vlr>100</vlr>
+           <obs>Teste obs 1</obs>
+           </parcela>
+           </parcelas>
+           <vlr_frete>${randomNumbers(10, 30)}</vlr_frete>
+           <vlr_desconto>10</vlr_desconto>
+           <obs>Testando o campo observações do pedido</obs>
+           <obs_internas>Testando o campo observações internas do pedido</obs_internas>
+          </pedido>`),
+        ''
+      );
+    } catch (err) {
+      if (err) throw new Error(err);
+    }
 
-    return response.status(201).json({});
+    console.log(pipedriveDataToXmlBlingData.replace(/(\r\n|\r|\n|\n\r)/, ''));
+
+    const res = await apiBling.post('/pedido/json/', {
+      // dando 401
+      data: {
+        apikey: apiKey,
+        xml: pipedriveDataToXmlBlingData,
+      },
+    });
+
+    return response.status(201).json(res);
   },
 };
